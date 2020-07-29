@@ -3,6 +3,6 @@
 
 {% block content %}
 {% for question in questions %}
-<P>{{ question }}</P>
+<a href="{% url 'all_answers' pk=question.pk %}"><P>{{ question }}</P></a>
 {% endfor %}
 {% endblock %}
