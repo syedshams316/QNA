@@ -1,4 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views import generic
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import Question, Answer
 from .forms import QuestionForm
 
@@ -7,46 +11,57 @@ from .forms import QuestionForm
 
 def index(request):
     questions = Question.objects.order_by('created')
-    return render(request, 'qna/question_list.html', {'questions': questions})
+    return render(request, 'qna/index.html', {'questions': questions})
 
 
 # CRUD of question
-def create_question(request):
-    if request.method == 'POST':
-        form = QuestionForm(request.POST)
+class CreateQuestionView(LoginRequiredMixin, generic.CreateView):
+
+    form_class = QuestionForm
+    template_name = 'qna/new_question.html'
+    success_url = 'index'
+
+    def get(self, request, *args, **kwargs):
+        context = "write a good question " + str(request.user)
+        form = self.form_class()
+        return render(request, self.template_name, {'context': context, 'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
         if form.is_valid():
             question = form.save(commit=False)
             question.author = request.user
             question.save()
-            return redirect('question_list')
-    else:
-        form = QuestionForm()
-    return render(request, 'qna/new_question.html', {'form': form})
+
+        return redirect(self.success_url)
 
 
-def all_answers(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-    answers = question.answers.all().order_by('created')
-    return render(request, 'qna/all_answers.html',
-                  {'question': question, 'answers': answers})
+class QuestionDetailView(generic.DetailView):
+
+    model = Question
+    template_name = 'qna/question_detail.html'
+    context_object_name = 'question'
 
 
-def edit_question(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-    if request.method == 'POST':
-        form = QuestionForm(request.POST, instance=question)
-        if form.is_valid():
-            question = form.save(commit=False)
-            question.author = request.user
-            question.save()
-            return redirect('question_list')
-    else:
-        form = QuestionForm(instance=question)
-    return render(request, 'qna/edit_question.html', {'form': form})
+class UpdateQuestionView(LoginRequiredMixin, generic.UpdateView):
+
+    form_class = QuestionForm
+    template_name = 'qna/edit_question.html'
+    success_url = reverse_lazy('index')
+
+    def get_queryset(self):
+        return Question.objects.filter(author=self.request.user)
 
 
-def delete_question(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-    question.delete()
-    return redirect('question_list')
+class DeleteQuestionView(LoginRequiredMixin, generic.DeleteView):
+
+    template_name = 'qna/question_confirm_delete.html'
+    context_object_name = 'question'
+    success_url = reverse_lazy('index')
+
+    def get_queryset(self):
+        return Question.objects.filter(author=self.request.user)
+
+
+
 

@@ -1,0 +1,6 @@
+<p>Do you really want to delete this question?</p>
+{{ question }}
+<form method="post">{% csrf_token %}
+    <p><button type="submit">Delete</button></p>
+    <p><a href="{% url 'index' %}">Cancel</a></p>
+</form>

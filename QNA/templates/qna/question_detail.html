@@ -2,7 +2,7 @@
 
 {% block content %}
 {{ question }}
-{% for answer in answers %}
+{% for answer in question.answers.all %}
 <P>{{ answer.text }}</P>
 {% endfor %}
 <h2><a href="{% url 'edit_question' pk=question.pk% }">Edit Question</a> </h2>

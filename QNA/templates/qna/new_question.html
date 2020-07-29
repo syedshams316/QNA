@@ -2,6 +2,7 @@
 
 {% block content %}
 <h2>New Question</h2>
+{{context}}
 <form method="POST" class="question-form">{% csrf_token %}
 {{ form.as_p }}
     <button type="submit" class="save btn btn-default">Ask</button>
