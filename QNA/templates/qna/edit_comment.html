@@ -1,0 +1,12 @@
+{% extends 'qna/base.html' %}
+
+{% block content %}
+
+<p>Edit your Comment</p>
+
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <p><button type="submit">Comment</button></p>
+</form>
+
+{% endblock %}

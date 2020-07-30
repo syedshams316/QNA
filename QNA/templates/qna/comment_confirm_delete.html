@@ -2,8 +2,8 @@
 
 {% block content %}
 
-<p>Do you really want to delete this answer ?</p>
-{{ answer }}
+<p>Do you really want to delete this comment ?</p>
+{{ comment }}
 <form method="post">{% csrf_token %}
     <p><button type="submit">Delete</button></p>
     <p><a href="{% url 'index' %}">Cancel</a></p>

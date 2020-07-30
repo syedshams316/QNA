@@ -3,18 +3,19 @@ from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Question, Answer
-from .forms import QuestionForm, AnswerForm
+from .models import Question, Answer, Comment
+from .forms import QuestionForm, AnswerForm, CommentForm
 
 # Create your views here.
 
 
+# Index view
 def index(request):
     questions = Question.objects.order_by('created')
     return render(request, 'qna/index.html', {'questions': questions})
 
 
-# CRUD of question
+# CRUD of Questions
 class CreateQuestionView(LoginRequiredMixin, generic.CreateView):
 
     form_class = QuestionForm
@@ -58,7 +59,7 @@ class DeleteQuestionView(LoginRequiredMixin, generic.DeleteView):
         return Question.objects.filter(author=self.request.user)
 
 
-# CRUD of Answer
+# CRUD of Answers
 class CreateAnswerView(LoginRequiredMixin, generic.CreateView):
 
     form_class = AnswerForm
@@ -99,3 +100,41 @@ class DeleteAnswerView(LoginRequiredMixin, generic.DeleteView):
 
     def get_queryset(self):
         return Answer.objects.filter(author=self.request.user)
+
+
+# CRUD of Comments
+class CreateCommentView(LoginRequiredMixin, generic.CreateView):
+
+    form_class = CommentForm
+    template_name = 'qna/new_comment.html'
+    success_url = 'index'
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.answer = Answer.objects.get(pk=kwargs.get('pk'))
+            comment.author = request.user
+            comment.save()
+
+        return redirect(self.success_url)
+
+
+class UpdateCommentView(LoginRequiredMixin, generic.UpdateView):
+
+    form_class = CommentForm
+    template_name = 'qna/edit_comment.html'
+    success_url = reverse_lazy('index')
+
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
+
+
+class DeleteCommentView(LoginRequiredMixin, generic.DeleteView):
+
+    template_name = 'qna/comment_confirm_delete.html'
+    context_object_name = 'comment'
+    success_url = reverse_lazy('index')
+
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
