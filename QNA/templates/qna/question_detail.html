@@ -1,10 +1,21 @@
 {% extends 'qna/base.html' %}
 
 {% block content %}
-{{ question }}
+<P>{{ question }}</P>
+{% if request.user == question.author %}
+<h2><a href="{% url 'edit_question' pk=question.pk %}">Edit Question</a> </h2>
+<h3><a href="{% url 'delete_question' pk=question.pk %}">Delete Question</a> </h3>
+{% endif %}
 {% for answer in question.answers.all %}
 <P>{{ answer.text }}</P>
+{% if request.user == answer.author %}
+<p><a href="{% url 'edit_answer' pk=answer.pk %}">Edit Answer</a></P>
+<p><a href="{% url 'delete_answer' pk=answer.pk %}">Delete Answer</a></p>
+{% endif %}
 {% endfor %}
-<h2><a href="{% url 'edit_question' pk=question.pk% }">Edit Question</a> </h2>
-<h3><a href="{% url 'delete_question' pk=question.pk %}">Delete Question</a> </h3>
+
+{% if request.user.is_authenticated %}
+<h2><a href="{% url 'new_answer' pk=question.pk %}">Give An Answer</a></h2>
+{% endif %}
+
 {% endblock %}

@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Question, Answer
-from .forms import QuestionForm
+from .forms import QuestionForm, AnswerForm
 
 # Create your views here.
 
@@ -20,11 +20,6 @@ class CreateQuestionView(LoginRequiredMixin, generic.CreateView):
     form_class = QuestionForm
     template_name = 'qna/new_question.html'
     success_url = 'index'
-
-    def get(self, request, *args, **kwargs):
-        context = "write a good question " + str(request.user)
-        form = self.form_class()
-        return render(request, self.template_name, {'context': context, 'form': form})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -63,5 +58,44 @@ class DeleteQuestionView(LoginRequiredMixin, generic.DeleteView):
         return Question.objects.filter(author=self.request.user)
 
 
+# CRUD of Answer
+class CreateAnswerView(LoginRequiredMixin, generic.CreateView):
+
+    form_class = AnswerForm
+    template_name = 'qna/new_answer.html'
+    success_url = 'index'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['msg'] = "Write a good Answer : "
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.question = Question.objects.get(pk=kwargs.get('pk'))
+            answer.author = request.user
+            answer.save()
+
+        return redirect(self.success_url)
 
 
+class UpdateAnswerView(LoginRequiredMixin, generic.UpdateView):
+
+    form_class = AnswerForm
+    template_name = 'qna/edit_answer.html'
+    success_url = reverse_lazy('index')
+
+    def get_queryset(self):
+        return Answer.objects.filter(author=self.request.user)
+
+
+class DeleteAnswerView(LoginRequiredMixin, generic.DeleteView):
+
+    template_name = 'qna/answer_confirm_delete.html'
+    context_object_name = 'answer'
+    success_url = reverse_lazy('index')
+
+    def get_queryset(self):
+        return Answer.objects.filter(author=self.request.user)
