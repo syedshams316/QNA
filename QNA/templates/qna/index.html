@@ -1,8 +1,9 @@
 {% extends 'qna/base.html' %}
 
-
 {% block content %}
+
 {% for question in questions %}
 <a href="{% url 'question_detail' pk=question.pk %}"><P>{{ question }}</P></a>
 {% endfor %}
+
 {% endblock %}

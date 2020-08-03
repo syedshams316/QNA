@@ -1,6 +1,7 @@
 {% extends 'qna/base.html' %}
 
 {% block content %}
+
 <P>{{ question }}</P>
 
 {% if request.user == question.author %}
@@ -11,9 +12,16 @@
 {% for answer in question.answers.all %}
 
 <P>{{ answer.text }}</P>
+<p>{{ answer.up_votes.all|length }} {{ answer.down_votes.all|length }}</p>
+<P><a href="{% url 'answer_up_vote' pk=answer.pk %}"> UPVOTE </a>
+    <a href="{% url 'answer_down_vote' pk=answer.pk %}"> DOWNVOTE</a></P>
 
 {% for comment in answer.comments.all %}
-<p>{{ comment }}</p>
+
+<p>{{ comment.text }}</p>
+<p>{{ comment.up_votes.all|length }} {{ comment.down_votes.all|length }}</p>
+<P><a href="{% url 'comment_up_vote' pk=comment.pk %}">Like Comment</a>
+<a href="{% url 'comment_down_vote' pk=comment.pk %}">Dislike Comment</a></P>
 
 {% if request.user == comment.author %}
 <p><a href="{% url 'edit_comment' pk=comment.pk %}">Edit Comment</a></p>

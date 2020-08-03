@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from .models import Question, Answer, Comment
 from .forms import QuestionForm, AnswerForm, CommentForm
@@ -138,3 +139,52 @@ class DeleteCommentView(LoginRequiredMixin, generic.DeleteView):
 
     def get_queryset(self):
         return Comment.objects.filter(author=self.request.user)
+
+
+@login_required
+def answer_up_vote_toggle(request, pk):
+
+    answer = get_object_or_404(Answer, pk=pk)
+    if request.user in answer.up_votes.all():
+        answer.up_votes.remove(request.user)
+    else:
+        answer.up_votes.add(request.user)
+
+    return redirect('question_detail', answer.question.pk)
+
+
+@login_required
+def answer_down_vote_toggle(request, pk):
+
+    answer = get_object_or_404(Answer, pk=pk)
+    if request.user in answer.down_votes.all():
+        answer.down_votes.remove(request.user)
+    else:
+        answer.down_votes.add(request.user)
+
+    return redirect('question_detail', answer.question.pk)
+
+
+@login_required
+def comment_up_vote_toggle(request, pk):
+
+    comment = get_object_or_404(Comment, pk=pk)
+    if request.user in comment.up_votes.all():
+        comment.up_votes.remove(request.user)
+    else:
+        comment.up_votes.add(request.user)
+
+    return redirect('question_detail', comment.answer.question.pk)
+
+
+@login_required
+def comment_down_vote_toggle(request, pk):
+
+    comment = get_object_or_404(Comment, pk=pk)
+    if request.user in comment.down_votes.all():
+        comment.down_votes.remove(request.user)
+    else:
+        comment.down_votes.add(request.user)
+
+    return redirect('question_detail', comment.answer.question.pk)
+

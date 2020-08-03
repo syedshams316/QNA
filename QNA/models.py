@@ -22,8 +22,8 @@ class Answer(models.Model):
     text = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    up_votes = models.IntegerField(default=0)
-    down_votes = models.IntegerField(default=0)
+    up_votes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='answer_up_vote')
+    down_votes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='answer_down_vote')
 
     def __str__(self):
         return str(self.question) + str(self.author)
@@ -36,8 +36,8 @@ class Comment(models.Model):
     text = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    up_votes = models.IntegerField(default=0)
-    down_votes = models.IntegerField(default=0)
+    up_votes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_up_vote')
+    down_votes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_down_vote')
 
     def __str__(self):
         return str(self.author) + ' : ' + str(self.text)
