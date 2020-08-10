@@ -53,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     email = models.EmailField(unique=True, error_messages={
-        'unique': 'A user with that username already exists',
+        'unique': 'A user with that email already exists',
         }
     )
 
@@ -103,7 +103,7 @@ class UserProfileManager(models.Manager):
 
     def create_user_and_profile(self, full_name, username, email, password, **extra_fields):
         if not full_name:
-            raise ValueError('full_name must be set')
+            raise ValueError('full_name must be set ' + str(full_name))
 
         user = User.objects.create_user(username=username, email=email, password=password)
         user_profile = self.model(user=user, full_name=full_name, **extra_fields)

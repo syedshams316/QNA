@@ -1,0 +1,13 @@
+{% extends 'qna/base.html' %}
+
+{% block content %}
+<div class="text-center">
+    <p class="error-message">
+        {{error_message}}
+    </p>
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" >Log in</button>
+    </form>
+</div>
+{% endblock %}

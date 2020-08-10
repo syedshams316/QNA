@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<P>{{ question }}</P>
+<P>Question : {{ question }}</P>
 
 {% if request.user == question.author %}
 <h2><a href="{% url 'edit_question' pk=question.pk %}">Edit Question</a> </h2>
@@ -11,17 +11,19 @@
 
 {% for answer in question.answers.all %}
 
+<p>Answered by : <a href="/{{answer.author.username}}">{{ answer.author }}</a></p>
 <P>{{ answer.text }}</P>
-<p>{{ answer.up_votes.all|length }} {{ answer.down_votes.all|length }}</p>
-<P><a href="{% url 'answer_up_vote' pk=answer.pk %}"> UPVOTE </a>
-    <a href="{% url 'answer_down_vote' pk=answer.pk %}"> DOWNVOTE</a></P>
+<p>ON : {{ answer.updated }}</p>
+<P><a href="{% url 'answer_up_vote' pk=answer.pk %}"> UPVOTE </a>{{ answer.up_votes.all|length }}
+    <a href="{% url 'answer_down_vote' pk=answer.pk %}"> DOWNVOTE </a>{{ answer.down_votes.all|length }}</P>
 
 {% for comment in answer.comments.all %}
 
-<p>{{ comment.text }}</p>
-<p>{{ comment.up_votes.all|length }} {{ comment.down_votes.all|length }}</p>
-<P><a href="{% url 'comment_up_vote' pk=comment.pk %}">Like Comment</a>
-<a href="{% url 'comment_down_vote' pk=comment.pk %}">Dislike Comment</a></P>
+<p>Comment : {{ comment.text }}</p>
+<p>Made by: {{ comment.author }} ON : {{ comment.updated }}</p>
+
+<P><a href="{% url 'comment_up_vote' pk=comment.pk %}">Like Comment </a>{{ comment.up_votes.all|length }}
+<a href="{% url 'comment_down_vote' pk=comment.pk %}">Dislike Comment </a>{{ comment.down_votes.all|length }}</P>
 
 {% if request.user == comment.author %}
 <p><a href="{% url 'edit_comment' pk=comment.pk %}">Edit Comment</a></p>

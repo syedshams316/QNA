@@ -3,7 +3,13 @@
 {% block content %}
 
 {% for question in questions %}
-<a href="{% url 'question_detail' pk=question.pk %}"><P>{{ question }}</P></a>
+<a href="{% url 'question_detail' pk=question.pk %}"><P>Question : {{ question }}</P></a>
+{% with answer=question.answers.all|first %}
+<p>Answered by: <a href="/{{answer.author.username}}">{{ answer.author.profile.full_name }}</a></p>
+<p>Answer : {{ answer.text }}</p>
+<p>ON : {{ answer.updated }}</p>
+{% endwith %}
 {% endfor %}
 
 {% endblock %}
+
