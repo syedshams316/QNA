@@ -17,19 +17,17 @@ def index(request):
 
 
 # CRUD of Questions
-class CreateQuestionView(LoginRequiredMixin, generic.CreateView):
+class CreateQuestionView(LoginRequiredMixin, generic.View):
 
-    form_class = QuestionForm
-    template_name = 'qna/new_question.html'
     success_url = 'index'
 
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            question = form.save(commit=False)
-            question.author = request.user
-            question.save()
+    def get(self, request, *args, **kwargs):
+        return redirect('/')
 
+    def post(self, request, *args, **kwargs):
+        print('post called')
+        text = request.POST.get('question_text')
+        Question.objects.create(text=text, author=request.user)
         return redirect(self.success_url)
 
 

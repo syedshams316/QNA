@@ -77,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email']
 
     def __str__(self):
-        return self.email
+        return self.username
 
     def get_email(self):
         return self.email
@@ -105,7 +105,7 @@ class UserProfileManager(models.Manager):
         if not full_name:
             raise ValueError('full_name must be set ' + str(full_name))
 
-        user = User.objects.create_user(username=username, email=email, password=password)
+        user = User.objects.create_user(username=username, password=password, email=email)
         user_profile = self.model(user=user, full_name=full_name, **extra_fields)
         user_profile.save()
         return user, user_profile
@@ -173,10 +173,3 @@ class UserProfile(models.Model):
             self.un_follow(user)
         else:
             self.follow(user)
-
-
-
-
-
-
-

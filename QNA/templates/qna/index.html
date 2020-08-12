@@ -3,12 +3,17 @@
 {% block content %}
 
 {% for question in questions %}
-<a href="{% url 'question_detail' pk=question.pk %}"><P>Question : {{ question }}</P></a>
+
+<a style="color:black;" href="{% url 'question_detail' pk=question.pk %}"><P><h5> {{ question }}</h5></a><br>
+{% if question.answers.all|length == 0 %}
+<p>No answers yet</p>
+{% else %}
 {% with answer=question.answers.all|first %}
-<p>Answered by: <a href="/{{answer.author.username}}">{{ answer.author.profile.full_name }}</a></p>
-<p>Answer : {{ answer.text }}</p>
-<p>ON : {{ answer.updated }}</p>
+<h6><b><a href="/user/{{answer.author.username}}"><img src="{{ answer.author.profile.avatar.url }}" height="40" width="40" class="img-thumbnail">{{ answer.author.profile.full_name }}</a></b></h6>
+    <span class="small text-muted">  {{ answer.updated }}</span>
+<p>{{ answer.text }}</p>
 {% endwith %}
+{% endif %}<br><br>
 {% endfor %}
 
 {% endblock %}

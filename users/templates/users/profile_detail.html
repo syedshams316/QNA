@@ -1,14 +1,27 @@
 {% extends 'qna/base.html' %}
 
 {% block content %}
-{% if user.is_authenticated %}
 <img src="{{ profile.avatar.url }}" height="100" width="100">
 <p>FULL NAME : {{ profile.full_name }}</p>
 <p>USERNAME : {{ profile.user.username }}</p>
 <p>EMAIL : {{ profile.user.email }}</p>
-<p>BIO : {{ profile.bio }}</p>
+<p>{{ profile.bio }}</p>
+<div class="padding-left-sm">
+                <span>{{profile.get_following|length}} Following</span>&emsp;
+                <span>{{profile.get_followers|length}} Followers</span>
+            </div>
+<br>
+{% if request.user.is_authenticated %}
+{% if profile.user == request.user %}
+<span class="btn btn-outline-primary btn-sm"><a href="{% url 'user_update' request.user.username %}"><P style="color:black"><b>Update Profile</b></P></a></span>
+{% else %}
+<form action="{% url 'toggle_follow' %}" method="post" class="post-form">{% csrf_token %}
+                    <input type="hidden" name="previous_page" value="{{request.path}}">
+                    <input type="hidden" name="username" value="{{user.username}}">
+                    <button type="submit" class="btn btn-outline-primary">{% if profile in request.user.profile.get_following %}Unfollow{%else%}Follow{%endif%}</button>
+                </form>
 {% endif %}
-        <a href="{% url 'user_update' request.user.username %}"><P>Update Profile</P></a>
-<p>{{ profile.avatar.url }}</p>
+{% endif %}
+
 
 {% endblock %}

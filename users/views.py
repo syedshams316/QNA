@@ -19,7 +19,7 @@ class UserRegistrationView(generic.FormView):
         full_name = form.cleaned_data.get('full_name')
         username = form.cleaned_data.get('username')
         email = form.cleaned_data.get('email')
-        password = form.cleaned_data.get('password')
+        password = form.cleaned_data.get('password2')
         user, user_profile = UserProfile.objects.create_user_and_profile(
             full_name=full_name, username=username, email=email, password=password)
 
@@ -51,6 +51,9 @@ class UserLoginView(generic.FormView):
                           {'form': form, 'error_message': error_message})
         login(self.request, user)
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('user_detail', args=(self.request.user.username,))
 
 
 def log_out(request):
@@ -92,7 +95,7 @@ class UserProfileUpdateView(generic.View):
 
     def post(self, *args, **kwargs):
         user = self.request.user
-        form = self.form_class(self.request.POST)
+        form = self.form_class(self.request.POST, self.request.FILES)
         if form.is_valid():
             user.username = form.cleaned_data.get('username')
             user.email = form.cleaned_data.get('email')
@@ -118,19 +121,4 @@ def follow_toggle_view(request):
     user = get_object_or_404(User, username=username)
     user_profile = UserProfile.objects.create_or_get(request.user)
     user_profile.toggle_follow(user)
-    print(request.POST.get('previous_page'))
     return redirect(request.POST.get('previous_page'))
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,50 +1,53 @@
 {% extends 'qna/base.html' %}
 
 {% block content %}
-
+<br>
 <P>Question : {{ question }}</P>
 
 {% if request.user == question.author %}
-<h2><a href="{% url 'edit_question' pk=question.pk %}">Edit Question</a> </h2>
-<h3><a href="{% url 'delete_question' pk=question.pk %}">Delete Question</a> </h3>
+    <span class="btn btn-warning"><a href="{% url 'edit_question' pk=question.pk %}"><i class="fas fa-edit"></i></a></span>
+    <span class="btn btn-outline-danger"><a href="{% url 'delete_question' pk=question.pk %}"><i class="fas fa-trash-alt"></i></a></span>
 {% endif %}
 
 {% for answer in question.answers.all %}
 
-<p>Answered by : <a href="/{{answer.author.username}}">{{ answer.author }}</a></p>
+<h6><a href="/{{answer.author.username}}"><img src="{{ answer.author.profile.avatar.url }}" height="40" width="40">{{ answer.author.username }}</a></h6>
+<p class="text-muted small">{{ answer.updated }}</p>
 <P>{{ answer.text }}</P>
-<p>ON : {{ answer.updated }}</p>
-<P><a href="{% url 'answer_up_vote' pk=answer.pk %}"> UPVOTE </a>{{ answer.up_votes.all|length }}
-    <a href="{% url 'answer_down_vote' pk=answer.pk %}"> DOWNVOTE </a>{{ answer.down_votes.all|length }}</P>
+
+<P><a href="{% url 'answer_up_vote' pk=answer.pk %}"> <i class="fas fa-arrow-up"></i> {{ answer.up_votes.all|length }}</a>
+    <a href="{% url 'answer_down_vote' pk=answer.pk %}"> <i class="fas fa-arrow-down"></i> {{ answer.down_votes.all|length }}</a></P>
 
 {% for comment in answer.comments.all %}
 
 <p>Comment : {{ comment.text }}</p>
-<p>Made by: {{ comment.author }} ON : {{ comment.updated }}</p>
+<p class="text-muted">Made by: <a href="/ {{ comment.author.username }} ">{{ comment.author.username }}</a> {{ comment.updated }}</p>
 
-<P><a href="{% url 'comment_up_vote' pk=comment.pk %}">Like Comment </a>{{ comment.up_votes.all|length }}
-<a href="{% url 'comment_down_vote' pk=comment.pk %}">Dislike Comment </a>{{ comment.down_votes.all|length }}</P>
+<P><a href="{% url 'comment_up_vote' pk=comment.pk %}"><i class="fas fa-thumbs-up" ></i>    {{ comment.up_votes.all|length }}</a>
+    <a href="{% url 'comment_down_vote' pk=comment.pk %}">  <i class="fas fa-thumbs-down" ></i>    {{ comment.down_votes.all|length }}</a></P>
 
 {% if request.user == comment.author %}
-<p><a href="{% url 'edit_comment' pk=comment.pk %}">Edit Comment</a></p>
-<p><a href="{% url 'delete_comment' pk=comment.pk %}">Delete Comment</a></p>
+<p><span class="btn btn-warning"><a href="{% url 'edit_comment' pk=comment.pk %}"><i class="fas fa-edit"></i></a></span>
+    <span class="btn btn-danger"><a href="{% url 'delete_comment' pk=comment.pk %}"><i class="fas fa-trash-alt"></i></a></span></p>
 {% endif %}
 
 {% endfor %}
 
 {% if request.user.is_authenticated %}
-<p><a href="{% url 'new_comment' pk=answer.pk %}">Comment</a></p>
+<p><a href="{% url 'new_comment' pk=answer.pk %}"> COMMENT  <i class="fas fa-comment"></i></a></p>
 {% endif %}
 
 {% if request.user == answer.author %}
-<p><a href="{% url 'edit_answer' pk=answer.pk %}">Edit Answer</a></P>
-<p><a href="{% url 'delete_answer' pk=answer.pk %}">Delete Answer</a></p>
+<p><span class="btn btn-warning"><a href="{% url 'edit_answer' pk=answer.pk %}"><i class="fas fa-edit"></i></a></span>
+    <span class="btn btn-outline-danger"><a href="{% url 'delete_answer' pk=answer.pk %}"><i class="fas fa-trash-alt"></i></a></span></p>
 {% endif %}
 
 {% endfor %}
 
 {% if request.user.is_authenticated %}
 <h2><a href="{% url 'new_answer' pk=question.pk %}">Give An Answer</a></h2>
+<br>
+<br>
 {% endif %}
 
 {% endblock %}

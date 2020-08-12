@@ -1,9 +1,13 @@
 {% extends 'qna/base.html' %}
 
 {% block content %}
+<br>
+<br>
+<br>
 <P> New Answer </P>
 {{ msg }}
-<form method="post">{% csrf_token %}
+<form method="post">
+    {% csrf_token %}
     {{ form.as_p}}
     <button type="submit">ANSWER</button>
 </form>

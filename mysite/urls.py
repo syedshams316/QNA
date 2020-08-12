@@ -22,7 +22,7 @@ from . import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('QNA.urls')),
-    path('', include('users.urls')),
+    path('user/', include('users.urls')),
 ]
 
 if settings.DEBUG:

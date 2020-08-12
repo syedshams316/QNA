@@ -1,0 +1,39 @@
+<header class="container">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="{% url 'index' %}">QNA</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        {% if request.user.is_authenticated %}
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'new_question' %}">{% csrf_token %}
+                <input class="form-control mr-sm-2" placeholder="Ask a Question" name="question_text">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Ask</button>
+            </form>
+            {% else %}
+            <h5 style="color: white;">LOGIN IN TO ASK A QUESTION</h5>
+            {% endif %}
+
+            <ul class="navbar-nav mr-auto">
+                {% if request.user.is_authenticated %}
+
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'user_detail' request.user.username %}">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+
+                {% else %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'registration' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</header>
