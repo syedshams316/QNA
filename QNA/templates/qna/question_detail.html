@@ -5,7 +5,7 @@
 <h1>Question : {{ question }}</h1>
 <br>
 {% if request.user.is_authenticated %}
-<h2><a href="{% url 'new_answer' pk=question.pk %}">Write AN Answer</a></h2>
+<h2><a href="{% url 'new_answer' pk=question.pk %}">Write an Answer</a></h2>
 <br>
 {% endif %}
 {% if request.user == question.author %}
@@ -20,8 +20,10 @@
 <p class="text-muted small">{{ answer.updated }}</p>
 <h6>{{ answer.text }}</h6>
 
+{% if request.user.is_authenticated %}
 <P><a href="{% url 'answer_up_vote' pk=answer.pk %}"> <i class="fas fa-arrow-up"></i> {{ answer.up_votes.all|length }}</a>
     <a href="{% url 'answer_down_vote' pk=answer.pk %}"> <i class="fas fa-arrow-down"></i> {{ answer.down_votes.all|length }}</a></P>
+{% endif %}
 
 <div id="comment" style="display:none">
 
@@ -30,8 +32,10 @@
 <p>Comment : {{ comment.text }}</p>
 <p class="text-muted">Made by: <a href="/ {{ comment.author.username }} ">{{ comment.author.username }}</a> {{ comment.updated }}</p>
 
+    {% if request.user.is_authenticated %}
 <P><a href="{% url 'comment_up_vote' pk=comment.pk %}"><i class="fas fa-thumbs-up" ></i>    {{ comment.up_votes.all|length }}</a>
     <a href="{% url 'comment_down_vote' pk=comment.pk %}">  <i class="fas fa-thumbs-down" ></i>    {{ comment.down_votes.all|length }}</a></P>
+{% endif %}
 
 {% if request.user == comment.author %}
 <p><span class="btn btn-warning"><a href="{% url 'edit_comment' pk=comment.pk %}"><i class="fas fa-edit"></i></a></span>

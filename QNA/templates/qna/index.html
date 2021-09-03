@@ -4,7 +4,7 @@
 
 {% for question in questions %}
 
-<a style="color:black;" href="{% url 'question_detail' pk=question.pk %}"><P><h1> {{ question }}</h1></a><br>
+<a style="color:black;" href="{% url 'question_detail' pk=question.pk %}"><h1> {{ question }}</h1></a><br>
 {% if question.answers.all|length == 0 %}
 <p>No answers yet</p>
 {% else %}
@@ -12,15 +12,20 @@
 <div id="AnswerBlock" style="background-color: white">
 {% with answer=question.answers.all|first %}
 
+
 <a href="/user/{{answer.author.username}}"><img src="{{ answer.author.profile.avatar.url }}" height="40" width="40" class="img-thumbnail">{{ answer.author.profile.full_name }}</a>
     <span class="small text-muted">  {{ answer.updated }}</span>
-<p>{{ answer.text }}</p>
+<p>{{ answer.text }}</p><br>
+
+    {% if request.user.is_authenticated %}
+<P><a href="{% url 'answer_up_vote' pk=answer.pk %}"> <i class="fas fa-arrow-up"></i> {{ answer.up_votes.all|length }}</a>
+    <a href="{% url 'answer_down_vote' pk=answer.pk %}"> <i class="fas fa-arrow-down"></i> {{ answer.down_votes.all|length }}</a></P>
+    {% endif %}
     <hr>
 </div>
 {% endwith %}
 {% endif %}<br><br>
 {% endfor %}
-
 
 {% endblock %}
 

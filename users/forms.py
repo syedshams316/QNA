@@ -23,6 +23,8 @@ class UserRegistrationForm(forms.Form):
     def clean_username(self):
 
         username = self.cleaned_data.get('username')
+       # if len(username < 4):
+        #    raise forms.ValidationError('username must at least be 4 characters long')
         if User.objects.filter(username=username).exists():
             raise forms.ValidationError('username already exists')
         return username
@@ -38,6 +40,16 @@ class UserRegistrationForm(forms.Form):
 
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
+        # At least 8 char long
+        if len(password1) < 8:
+            raise forms.ValidationError("The new password must be at least 8 characters long." )
+        # check for digit
+        if not any(char.isdigit() for char in password1):
+            raise forms.ValidationError('Password must contain at least 1 digit.')
+        # check for letter
+        if not any(char.isalpha() for char in password1):
+            raise forms.ValidationError('Password must contain at least 1 letter.')
+        # passwords should match
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError('Passwords do not match')
         return password2

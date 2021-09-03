@@ -28,6 +28,7 @@ class CreateQuestionView(LoginRequiredMixin, generic.View):
     def post(self, request, *args, **kwargs):
         text = request.POST.get('question_text')
         if len(text) < 10:
+            print('in error')
             messages.error(request, "Include a few more words in your Question!")
             return self.get(request)
         Question.objects.create(text=text, author=request.user)
@@ -70,7 +71,6 @@ class CreateAnswerView(LoginRequiredMixin, generic.CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['msg'] = "Write a good Answer : "
         return context
 
     def post(self, request, *args, **kwargs):
