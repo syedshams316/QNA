@@ -35,16 +35,13 @@ class UserLoginView(generic.FormView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('user_detail')
+            return redirect(reverse('user_detail', args=(self.request.user.username,)))
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password')
-        print(username)
-        print(password)
         user = authenticate(username=username, password=password)
-        print(user)
         if user is None:
             error_message = 'username and password do not match'
             return render(self.request, self.template_name,

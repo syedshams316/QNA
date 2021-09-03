@@ -9,10 +9,8 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'new_question' %}">{% csrf_token %}
                 <input class="form-control mr-sm-2" placeholder="Ask a Question" name="question_text">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Ask</button>
+                <button class="btn btn-dark" type="submit">Ask</button>
             </form>
-            {% else %}
-            <h5 style="color: white;">LOGIN IN TO ASK A QUESTION</h5>
             {% endif %}
 
             <ul class="navbar-nav mr-auto">
@@ -29,7 +27,7 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'login' %}">Login</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" href="{% url 'registration' %}">Register</a>
                 </li>
                 {% endif %}

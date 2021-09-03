@@ -3,6 +3,7 @@ from django.views import generic
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .models import Question, Answer, Comment
 from .forms import QuestionForm, AnswerForm, CommentForm
@@ -25,8 +26,10 @@ class CreateQuestionView(LoginRequiredMixin, generic.View):
         return redirect('/')
 
     def post(self, request, *args, **kwargs):
-        print('post called')
         text = request.POST.get('question_text')
+        if len(text) < 10:
+            messages.error(request, "Include a few more words in your Question!")
+            return self.get(request)
         Question.objects.create(text=text, author=request.user)
         return redirect(self.success_url)
 

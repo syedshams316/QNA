@@ -2,21 +2,28 @@
 
 {% block content %}
 <br>
-<P>Question : {{ question }}</P>
-
+<h1>Question : {{ question }}</h1>
+<br>
+{% if request.user.is_authenticated %}
+<h2><a href="{% url 'new_answer' pk=question.pk %}">Write AN Answer</a></h2>
+<br>
+{% endif %}
 {% if request.user == question.author %}
     <span class="btn btn-warning"><a href="{% url 'edit_question' pk=question.pk %}"><i class="fas fa-edit"></i></a></span>
     <span class="btn btn-outline-danger"><a href="{% url 'delete_question' pk=question.pk %}"><i class="fas fa-trash-alt"></i></a></span>
 {% endif %}
+<hr>
 
 {% for answer in question.answers.all %}
 
-<h6><a href="/{{answer.author.username}}"><img src="{{ answer.author.profile.avatar.url }}" height="40" width="40">{{ answer.author.username }}</a></h6>
+<p><a href="/{{answer.author.username}}"><img src="{{ answer.author.profile.avatar.url }}" height="40" width="40">{{ answer.author.username }}</a></p>
 <p class="text-muted small">{{ answer.updated }}</p>
-<P>{{ answer.text }}</P>
+<h6>{{ answer.text }}</h6>
 
 <P><a href="{% url 'answer_up_vote' pk=answer.pk %}"> <i class="fas fa-arrow-up"></i> {{ answer.up_votes.all|length }}</a>
     <a href="{% url 'answer_down_vote' pk=answer.pk %}"> <i class="fas fa-arrow-down"></i> {{ answer.down_votes.all|length }}</a></P>
+
+<div id="comment" style="display:none">
 
 {% for comment in answer.comments.all %}
 
@@ -37,17 +44,34 @@
 <p><a href="{% url 'new_comment' pk=answer.pk %}"> COMMENT  <i class="fas fa-comment"></i></a></p>
 {% endif %}
 
+</div>
+<br>
+<script>
+    function showDiv() {
+   document.getElementById('comment').style.display = "block";
+}
+</script>
+
+<input type="button" value="Comments"  onclick="showDiv()"
+       style="background-color: RoyalBlue ;
+              border: none;
+              color: white;
+              padding: 2px 8px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 2p" />
+<br>
 {% if request.user == answer.author %}
 <p><span class="btn btn-warning"><a href="{% url 'edit_answer' pk=answer.pk %}"><i class="fas fa-edit"></i></a></span>
     <span class="btn btn-outline-danger"><a href="{% url 'delete_answer' pk=answer.pk %}"><i class="fas fa-trash-alt"></i></a></span></p>
 {% endif %}
-
+<hr>
 {% endfor %}
 
-{% if request.user.is_authenticated %}
-<h2><a href="{% url 'new_answer' pk=question.pk %}">Give An Answer</a></h2>
-<br>
-<br>
-{% endif %}
+
 
 {% endblock %}
+
+
+
